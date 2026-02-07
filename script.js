@@ -1,10 +1,11 @@
-const chatToggle = document.getElementById("chat-toggle");
+﻿const chatToggle = document.getElementById("chat-toggle");
 const chatClose = document.getElementById("chat-close");
 const chatWidget = document.getElementById("chat-widget");
 const chatForm = document.getElementById("chat-form");
 const chatInput = document.getElementById("chat-input");
 const chatMessages = document.getElementById("chat-messages");
 const chips = document.querySelectorAll(".chip");
+const assistantMode = document.getElementById("assistant-mode");
 
 const bookingForm = document.getElementById("booking-form");
 const bookingMessage = document.getElementById("booking-message");
@@ -12,30 +13,37 @@ const dateInput = document.getElementById("date");
 
 const recommendBtn = document.getElementById("recommend-btn");
 const recommendationResult = document.getElementById("recommendation-result");
-const interestSelect = document.getElementById("interest");
-const moodSelect = document.getElementById("mood");
 
-const BOT_INTRO =
-  "Bonjour, je suis votre assistant TimeTravel. Je peux parler destinations, prix, FAQ et conseils.";
+const q1 = document.getElementById("q1");
+const q2 = document.getElementById("q2");
+const q3 = document.getElementById("q3");
+const q4 = document.getElementById("q4");
+
+const API_ENDPOINT = "/api/chat";
+const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "::1"]);
+const CAN_USE_SERVERLESS_API =
+  window.location.protocol !== "file:" &&
+  !LOCAL_HOSTS.has(window.location.hostname);
+const chatHistory = [];
 
 const DESTINATIONS = {
   paris: {
     name: "Paris 1889",
     price: "2 900 EUR",
     reply:
-      "Paris 1889: Belle Epoque, Exposition Universelle, ambiance elegante et culturelle.",
+      "Paris 1889: Belle Epoque, Exposition Universelle, Tour Eiffel naissante, atmosphere elegante.",
   },
   cretace: {
     name: "Cretace -65M",
     price: "4 800 EUR",
     reply:
-      "Cretace -65M: immersion nature extreme, observation de dinosaures avec capsule securisee.",
+      "Cretace -65M: immersion aventure-nature, observation de dinosaures avec protocole de securite renforce.",
   },
   florence: {
     name: "Florence 1504",
     price: "3 400 EUR",
     reply:
-      "Florence 1504: coeur de la Renaissance, ateliers d artistes et architecture d exception.",
+      "Florence 1504: Renaissance italienne, ateliers d artistes, architecture et effervescence culturelle.",
   },
 };
 
@@ -64,10 +72,11 @@ function normalizeText(text) {
     .trim();
 }
 
-function getBotReply(rawInput) {
+function getLocalReply(rawInput) {
   const input = normalizeText(rawInput);
 
   if (!input) return "Je vous ecoute.";
+
   if (/(bonjour|salut|hello|bonsoir)/.test(input)) {
     return "Bonjour, ravi de vous aider a choisir votre voyage temporel.";
   }
@@ -89,11 +98,11 @@ function getBotReply(rawInput) {
   }
 
   if (/(faq|annulation|remboursement)/.test(input)) {
-    return "FAQ: annulation gratuite jusqu a J-30, puis avoir de 80%. Assurance chrono incluse sur toutes les offres.";
+    return "FAQ: annulation gratuite jusqu a J-30, puis avoir de 80%. Assurance chrono incluse.";
   }
 
   if (/(conseil|choisir|recommand|hesite|indecis)/.test(input)) {
-    return "Conseil rapide: culture/raffinement -> Paris 1889, aventure/nature -> Cretace -65M, art/architecture -> Florence 1504.";
+    return "Conseil rapide: culture -> Florence 1504, aventure -> Cretace -65M, elegance urbaine -> Paris 1889.";
   }
 
   if (/(securite|danger|risque)/.test(input)) {
@@ -103,53 +112,123 @@ function getBotReply(rawInput) {
   return "Je peux vous aider sur les destinations, les prix, la reservation et la FAQ. Posez une question plus precise.";
 }
 
+function setAssistantMode(mode) {
+  assistantMode.textContent = mode;
+}
+
+async function getAssistantReply(message) {
+  if (!CAN_USE_SERVERLESS_API) {
+    setAssistantMode("local");
+    return getLocalReply(message);
+  }
+
+  try {
+    const response = await fetch(API_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message, history: chatHistory.slice(-6) }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`API status ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (data && data.reply) {
+      setAssistantMode(data.mode || "ia");
+      return data.reply;
+    }
+
+    throw new Error("No reply in API payload");
+  } catch {
+    setAssistantMode("local");
+    return getLocalReply(message);
+  }
+}
+
+function addTypingHint() {
+  const typing = document.createElement("p");
+  typing.className = "message system";
+  typing.id = "typing-hint";
+  typing.textContent = "Assistant en train de repondre...";
+  chatMessages.appendChild(typing);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function removeTypingHint() {
+  const typing = document.getElementById("typing-hint");
+  if (typing) typing.remove();
+}
+
+async function submitChatPrompt(prompt) {
+  if (!prompt) return;
+  addMessage("user", prompt);
+  chatHistory.push({ role: "user", content: prompt });
+
+  addTypingHint();
+  const reply = await getAssistantReply(prompt);
+  removeTypingHint();
+
+  addMessage("bot", reply);
+  chatHistory.push({ role: "assistant", content: reply });
+}
+
 chatToggle.addEventListener("click", () => openChat(true));
 chatClose.addEventListener("click", closeChat);
 
-chatForm.addEventListener("submit", (event) => {
+chatForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const prompt = chatInput.value.trim();
   if (!prompt) return;
-  addMessage("user", prompt);
   chatInput.value = "";
-  const reply = getBotReply(prompt);
-  window.setTimeout(() => addMessage("bot", reply), 200);
+  await submitChatPrompt(prompt);
 });
 
 chips.forEach((chip) => {
-  chip.addEventListener("click", () => {
-    const prompt = chip.dataset.prompt || "";
+  chip.addEventListener("click", async () => {
     openChat(false);
-    addMessage("user", prompt);
-    const reply = getBotReply(prompt);
-    window.setTimeout(() => addMessage("bot", reply), 200);
+    const prompt = chip.dataset.prompt || "";
+    await submitChatPrompt(prompt);
   });
 });
 
 function recommendDestination() {
-  const interest = interestSelect.value;
-  const mood = moodSelect.value;
+  const score = {
+    "Paris 1889": 0,
+    "Cretace -65M": 0,
+    "Florence 1504": 0,
+  };
 
-  let scoreParis = 0;
-  let scoreCretace = 0;
-  let scoreFlorence = 0;
+  if (q1.value === "art") score["Florence 1504"] += 2;
+  if (q1.value === "nature") score["Cretace -65M"] += 2;
+  if (q1.value === "elegance") score["Paris 1889"] += 2;
 
-  if (interest === "culture") scoreFlorence += 2;
-  if (interest === "adventure") scoreCretace += 2;
-  if (interest === "elegance") scoreParis += 2;
+  if (q2.value === "modern") score["Paris 1889"] += 2;
+  if (q2.value === "ancient") score["Cretace -65M"] += 2;
+  if (q2.value === "renaissance") score["Florence 1504"] += 2;
 
-  if (mood === "city") scoreParis += 2;
-  if (mood === "wild") scoreCretace += 2;
-  if (mood === "museum") scoreFlorence += 2;
+  if (q3.value === "city") score["Paris 1889"] += 1;
+  if (q3.value === "wild") score["Cretace -65M"] += 1;
+  if (q3.value === "museum") score["Florence 1504"] += 1;
 
-  const ranking = [
-    { name: "Paris 1889", score: scoreParis, reason: "elegance et vie urbaine historique" },
-    { name: "Cretace -65M", score: scoreCretace, reason: "nature sauvage et aventure intense" },
-    { name: "Florence 1504", score: scoreFlorence, reason: "art, culture et patrimoine" },
-  ].sort((a, b) => b.score - a.score);
+  if (q4.value === "monuments") score["Paris 1889"] += 1;
+  if (q4.value === "fauna") score["Cretace -65M"] += 1;
+  if (q4.value === "galleries") score["Florence 1504"] += 1;
 
-  const best = ranking[0];
-  recommendationResult.textContent = `Recommendation: ${best.name} (${best.reason}).`;
+  const sorted = Object.entries(score).sort((a, b) => b[1] - a[1]);
+  const [best, points] = sorted[0];
+
+  const reasons = {
+    "Paris 1889": "ideal pour elegance urbaine, architecture et ambiance Belle Epoque.",
+    "Cretace -65M": "ideal pour aventure forte et observation de nature sauvage.",
+    "Florence 1504": "ideal pour passion art, patrimoine et ateliers de la Renaissance.",
+  };
+
+  recommendationResult.textContent = `Recommendation: ${best} (${points} pts) - ${reasons[best]}`;
+  recommendationResult.classList.remove("error");
+
+  const destinationField = document.getElementById("destination");
+  destinationField.value = best;
 }
 
 recommendBtn.addEventListener("click", recommendDestination);
@@ -185,5 +264,32 @@ bookingForm.addEventListener("submit", (event) => {
   dateInput.min = new Date().toISOString().split("T")[0];
 });
 
+function initReveal() {
+  const revealElements = document.querySelectorAll("[data-reveal]");
+  if (!("IntersectionObserver" in window)) {
+    revealElements.forEach((element) => element.classList.add("revealed"));
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("revealed");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.12 }
+  );
+
+  revealElements.forEach((element) => observer.observe(element));
+}
+
 dateInput.min = new Date().toISOString().split("T")[0];
-addMessage("bot", BOT_INTRO);
+initReveal();
+setAssistantMode("local");
+addMessage(
+  "bot",
+  "Bonjour, je suis votre assistant TimeTravel. Je peux vous guider sur les destinations, les prix, la securite et la reservation."
+);

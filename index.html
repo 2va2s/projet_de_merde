@@ -1,12 +1,12 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TimeTravel Agency</title>
+    <title>TimeTravel Agency | Webapp Interactive</title>
     <meta
       name="description"
-      content="Webapp minimaliste pour une agence de voyage temporel."
+      content="TimeTravel Agency: destinations temporelles, assistant IA, recommandation personnalisee et reservation."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,6 +22,7 @@
       <nav>
         <a href="#destinations">Destinations</a>
         <a href="#assistant">Assistant IA</a>
+        <a href="#quiz">Quiz</a>
         <a href="#reservation">Reservation</a>
       </nav>
     </header>
@@ -29,78 +30,87 @@
     <main id="top">
       <section class="hero">
         <div class="hero-bg" aria-hidden="true"></div>
-        <div class="hero-content">
-          <p class="eyebrow">Voyage temporel de luxe</p>
-          <h1>Explorez 3 epoques iconiques</h1>
+        <div class="hero-content" data-reveal>
+          <p class="eyebrow">Agence de voyage temporel premium</p>
+          <h1>Trois epoques. Une seule porte d entree.</h1>
           <p>
-            Paris 1889, Cretace -65M, Florence 1504. Une interface simple,
-            rapide, et prete a pitcher.
+            Explorez Paris 1889, le Cretace et Florence 1504 via une webapp
+            moderne avec assistant IA et recommandation personnalisee.
           </p>
-          <a class="cta" href="#destinations">Voir les destinations</a>
+          <div class="hero-actions">
+            <a class="cta" href="#destinations">Decouvrir les destinations</a>
+            <a class="cta cta-secondary" href="#assistant">Parler a l assistant</a>
+          </div>
         </div>
       </section>
 
-      <section id="destinations" class="section">
-        <h2>Destinations</h2>
+      <section class="section" id="about" data-reveal>
+        <h2>Concept</h2>
         <p class="section-intro">
-          Cliquez sur une carte pour voir le programme express et le tarif.
+          TimeTravel Agency propose des voyages temporels fictifs haut de gamme.
+          Cette version privilegie la rapidite, la clarte et les fonctionnalites
+          demandees dans le brief.
+        </p>
+      </section>
+
+      <section class="section" id="destinations">
+        <h2 data-reveal>Destinations</h2>
+        <p class="section-intro" data-reveal>
+          Cards interactives, details pratiques, et tarifs indicatifs.
         </p>
         <div class="cards">
-          <article class="card">
+          <article class="card" data-reveal>
             <img
-              src="https://images.unsplash.com/photo-1543349689-9a4d426bee8e?auto=format&fit=crop&w=1200&q=80"
-              alt="Paris 1889 style Belle Epoque"
+              src="./assets/paris-1889.jpg"
+              data-fallback="https://images.unsplash.com/photo-1543349689-9a4d426bee8e?auto=format&fit=crop&w=1200&q=80"
+              onerror="this.onerror=null;this.src=this.dataset.fallback;"
+              alt="Paris 1889, Belle Epoque"
               loading="lazy"
             />
             <div class="card-body">
               <h3>Paris 1889</h3>
-              <p>Belle Epoque, Exposition Universelle, Tour Eiffel naissante.</p>
+              <p>Belle Epoque, Exposition Universelle, inauguration de la Tour Eiffel.</p>
               <details>
-                <summary>Details</summary>
-                <p>
-                  Duree: 3 jours. Inclus: guide historien, passe salons prives,
-                  assurance chrono.
-                </p>
+                <summary>Voir details</summary>
+                <p>Duree: 3 jours. Inclus: guide historien, pass salons, assurance chrono.</p>
                 <p class="price">A partir de 2 900 EUR</p>
               </details>
             </div>
           </article>
 
-          <article class="card">
+          <article class="card" data-reveal>
             <img
-              src="https://images.unsplash.com/photo-1516934024742-b461fba47600?auto=format&fit=crop&w=1200&q=80"
-              alt="Paysage prehistorique evoquant le Cretace"
+              src="./assets/cretace-65m.jpg"
+              data-fallback="https://images.unsplash.com/photo-1516934024742-b461fba47600?auto=format&fit=crop&w=1200&q=80"
+              onerror="this.onerror=null;this.src=this.dataset.fallback;"
+              alt="Cretace -65M, expedition prehistorique"
               loading="lazy"
             />
             <div class="card-body">
               <h3>Cretace -65M</h3>
-              <p>Observation des dinosaures dans une reserve ultra securisee.</p>
+              <p>Observation de la faune prehistorique en environnement controle.</p>
               <details>
-                <summary>Details</summary>
-                <p>
-                  Duree: 2 jours. Inclus: capsule blindee, biologiste, extraction
-                  d urgence.
-                </p>
+                <summary>Voir details</summary>
+                <p>Duree: 2 jours. Inclus: capsule blindee, biologiste, extraction prioritaire.</p>
                 <p class="price">A partir de 4 800 EUR</p>
               </details>
             </div>
           </article>
 
-          <article class="card">
+          <article class="card" data-reveal>
             <img
-              src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1200&q=80"
-              alt="Florence Renaissance 1504"
+              src="./assets/florence-1504.jpg"
+              data-fallback="https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1200&q=80"
+              onerror="this.onerror=null;this.src=this.dataset.fallback;"
+              alt="Florence 1504, Renaissance italienne"
               loading="lazy"
             />
             <div class="card-body">
               <h3>Florence 1504</h3>
-              <p>Renaissance italienne, ateliers d artistes, effervescence civique.</p>
+              <p>Renaissance, art monumental, ateliers et vie intellectuelle florentine.</p>
               <details>
-                <summary>Details</summary>
-                <p>
-                  Duree: 4 jours. Inclus: circuit art prive, traducteur, passe
-                  ateliers.
-                </p>
+                <summary>Voir details</summary>
+                <p>Duree: 4 jours. Inclus: circuit art prive, traducteur, pass ateliers.</p>
                 <p class="price">A partir de 3 400 EUR</p>
               </details>
             </div>
@@ -108,54 +118,83 @@
         </div>
       </section>
 
-      <section id="assistant" class="section assistant">
+      <section class="section assistant" id="assistant" data-reveal>
         <h2>Assistant IA</h2>
         <p class="section-intro">
-          Utilisez le chat en bas a droite. Exemples rapides:
+          Chat en bas a droite. Il repond sur les destinations, prix, securite, FAQ
+          et recommandations.
+        </p>
+        <p class="assistant-status">
+          Mode actif: <span id="assistant-mode" class="badge">local</span>
         </p>
         <div class="chips">
           <button class="chip" data-prompt="Quel est le prix de Paris 1889 ?">
             Prix Paris 1889
           </button>
-          <button class="chip" data-prompt="Je veux nature et aventure">
+          <button class="chip" data-prompt="Je veux une destination aventure nature">
             Conseil aventure
           </button>
-          <button class="chip" data-prompt="FAQ annulation">
+          <button class="chip" data-prompt="FAQ annulation et securite">
             FAQ annulation
+          </button>
+          <button class="chip" data-prompt="Quelle destination pour art et architecture ?">
+            Conseil art
           </button>
         </div>
       </section>
 
-      <section id="reservation" class="section">
+      <section class="section" id="quiz" data-reveal>
+        <h2>Quiz personnalisation (4 questions)</h2>
+        <p class="section-intro">
+          Recommandation automatique en fonction de vos preferences.
+        </p>
+        <div class="quiz-box">
+          <div class="quiz-grid">
+            <label>
+              1. Type d experience recherchee
+              <select id="q1">
+                <option value="art">Culturelle et artistique</option>
+                <option value="nature">Aventure et nature</option>
+                <option value="elegance">Elegance et raffinement</option>
+              </select>
+            </label>
+            <label>
+              2. Periode preferee
+              <select id="q2">
+                <option value="modern">Histoire moderne (XIXe)</option>
+                <option value="ancient">Temps anciens et origines</option>
+                <option value="renaissance">Renaissance et classicisme</option>
+              </select>
+            </label>
+            <label>
+              3. Vous preferez
+              <select id="q3">
+                <option value="city">Effervescence urbaine</option>
+                <option value="wild">Nature sauvage</option>
+                <option value="museum">Art et architecture</option>
+              </select>
+            </label>
+            <label>
+              4. Activite ideale
+              <select id="q4">
+                <option value="monuments">Visiter des monuments</option>
+                <option value="fauna">Observer la faune</option>
+                <option value="galleries">Explorer des ateliers/musees</option>
+              </select>
+            </label>
+          </div>
+          <div class="quiz-actions">
+            <button id="recommend-btn" type="button">Lancer la recommandation</button>
+            <p id="recommendation-result" class="result"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="reservation" data-reveal>
         <h2>Reservation rapide</h2>
         <p class="section-intro">
-          Version minimaliste avec validation client et confirmation instantanee.
+          Formulaire simple avec validation locale et confirmation immediate.
         </p>
-
-        <div class="reco-box">
-          <h3>Mini recommandation</h3>
-          <div class="reco-grid">
-            <label>
-              Interet principal
-              <select id="interest">
-                <option value="culture">Culture et art</option>
-                <option value="adventure">Aventure nature</option>
-                <option value="elegance">Elegance urbaine</option>
-              </select>
-            </label>
-            <label>
-              Ambiance preferee
-              <select id="mood">
-                <option value="city">Ville animee</option>
-                <option value="wild">Nature sauvage</option>
-                <option value="museum">Musees et ateliers</option>
-              </select>
-            </label>
-            <button id="recommend-btn" type="button">Me recommander</button>
-          </div>
-          <p id="recommendation-result" class="result"></p>
-        </div>
-
         <form id="booking-form" class="booking-form" novalidate>
           <label>
             Destination
@@ -186,11 +225,11 @@
 
     <footer class="site-footer">
       <p>Projet pedagogique - TimeTravel Agency</p>
-      <p>Groupe de la flemme (M2 Ingénierie en machine learning)</p>
+      <p>Membres du groupe: a completer dans README.md</p>
     </footer>
 
     <button id="chat-toggle" class="chat-toggle" aria-label="Ouvrir le chat">
-      Chat
+      Chat IA
     </button>
 
     <section id="chat-widget" class="chat-widget" aria-live="polite">
