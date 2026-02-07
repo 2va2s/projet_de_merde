@@ -9,7 +9,7 @@ Groupe de la flemme (M2 Ingénierie en machine learning)
 
 ## URL publique
 
-- Production: a completer apres deploiement
+- Production: https://timetraveldelaflemme.vercel.app/
 
 ## Stack technique
 
